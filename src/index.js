@@ -1,7 +1,7 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const typeDefs = require("./schema");
-const resolvers = require("./resolvers");
+const resolvers = require("./resolvers/resolvers");
 const TrackAPI = require("./datasources/track-api");
 const conectarDB = require("./config/db");
 const jwt = require("jsonwebtoken");
@@ -20,9 +20,9 @@ async function startApolloServer() {
       const token = req.headers["authorization"] || "";
       if (token) {
         try {
-          const usuario = jwt.verify(token.replace('Bearer ', ''), process.env.TOKEN_SECRET);
+          const user = jwt.verify(token.replace('Bearer ', ''), process.env.TOKEN_SECRET);
           return {
-            usuario,
+            user,
           };
         } catch (error) {
           console.log("Error en context token ==> ", error);

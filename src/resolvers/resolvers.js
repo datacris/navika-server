@@ -1,9 +1,11 @@
-const Producto = require("./models/Producto");
-const Usuario = require("./models/Usuario");
-const Cliente = require("./models/Cliente");
-const Pedido = require("./models/Pedido");
+const Producto = require("../models/legacy/Producto");
+const Usuario = require("../models/legacy/Usuario");
+const Cliente = require("../models/legacy/Cliente");
+const Pedido = require("../models/legacy/Pedido");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
+const User = require("../models/User");
 require("dotenv").config({ path: "variables.env" });
 
 const crearToken = (usuario, secret, expiresIn) => {
@@ -12,8 +14,19 @@ const crearToken = (usuario, secret, expiresIn) => {
   return jwt.sign({ id, email, nombre, apellido }, secret, { expiresIn });
 };
 
+const newToken = (user, secret, expiresIn) => {
+  const { id, email, name } = user;
+  return jwt.sign({ id, email, name }, secret, { expiresIn });
+};
+
 const resolvers = {
   Query: {
+    // ************* NAVIKA INIT QUERY ************************************************************************************************
+    getUser: async (_, {}, ctx) => {
+      return ctx.user;
+    },
+    // ************* NAVIKA END QUERY  ************************************************************************************************
+
     // returns an array of Tracks that will be used to populate the homepage grid of our web client
     tracksForHome: (_, __, { dataSources }) => {
       return dataSources.trackAPI.getTracksForHome();
@@ -32,6 +45,7 @@ const resolvers = {
       // La primer version requeria enviar el token, al tenerlo dede locaStorage solo se requiere el context
       // const usuarioId = await jwt.verify(token, process.env.TOKEN_SECRET);
       // return usuarioId;
+      console.log(ctx);
       return ctx.usuario;
     },
     obtenerProductos: async () => {
@@ -182,6 +196,49 @@ const resolvers = {
     },
   },
   Mutation: {
+    // ************* NAVIKA INIT MUTATION ************************************************************************************************
+    createNewUser: async (_, { input }) => {
+      const { email, password } = input;
+      console.log(input);
+      try {
+        const userExists = await User.findOne({ email });
+
+        // Hashing password
+        const salt = await bcryptjs.genSalt(10);
+        input.password = await bcryptjs.hash(password, salt);
+
+        if (userExists) {
+          throw new Error("User already exists");
+        }
+        const newUser = new User(input);
+        await newUser.save();
+        return newUser;
+      } catch (error) {
+        console.log("Error createnewuser resolver ==> ", error);
+        throw error;
+      }
+    },
+    userSignIn: async (_, { input }) => {
+      const { email, password } = input;
+      const userExists = await User.findOne({ email });
+
+      if (!userExists) {
+        throw new Error("User does not exists");
+      }
+      const hasCredentials = await bcryptjs.compare(
+        password,
+        userExists.password
+      );
+
+      if (!hasCredentials) {
+        throw new Error("Wrong password");
+      }
+
+      return {
+        token: newToken(userExists, process.env.TOKEN_SECRET, "24h"),
+      };
+    },
+    // ************* NAVIKA END MUTATION ************************************************************************************************
     nuevoUsuario: async (_, { input }) => {
       const { email, password } = input;
       console.log(input);
@@ -353,7 +410,6 @@ const resolvers = {
       // solo lo itear cuando se van a modificar productos del pedido
       if (input.pedido) {
         for await (const articulo of input.pedido) {
-
           const { id } = articulo;
           const producto = await Producto.findById(id);
           console.log(producto);

@@ -1,6 +1,31 @@
 const gql = require("graphql-tag");
 
 const typeDefs = gql`
+
+# -------------------- NAVIKA INIT TYPE---------------------------------------------------------
+
+type User {
+  id: ID
+  name: String
+  email: String
+  created: String
+}
+
+input UserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+input SignInInput {
+  email: String!
+  password: String!
+} 
+type Token {
+  token: String
+}
+
+# -------------------- NAVIKA END TYPE---------------------------------------------------------
+
   type Usuario {
     id: ID
     nombre: String
@@ -47,9 +72,7 @@ const typeDefs = gql`
     total: Float
     vendedor: [Usuario]
   }
-  type Token {
-    token: String
-  }
+ 
   input UsuarioInput {
     nombre: String!
     apellido: String!
@@ -92,6 +115,12 @@ const typeDefs = gql`
 
   # -------------------------------- Query
   type Query {
+    # -------------------- NAVIKA INIT QUERY---------------------------------------------------------
+    getUser: User
+
+    # -------------------- NAVIKA END QUERY---------------------------------------------------------
+
+
     "Query to get tracks array for the homepage grid"
     tracksForHome: [Track!]!
     "Fetch a specific track, provided a track's ID"
@@ -128,6 +157,12 @@ const typeDefs = gql`
 
   # ----------------------------- Mutations
   type Mutation {
+    # -------------------- NAVIKA INIT MUTATIONS---------------------------------------------------------
+
+    createNewUser(input: UserInput): User
+    userSignIn(input: SignInInput): Token
+
+    # -------------------- NAVIKA INIT MUTATIONS---------------------------------------------------------
 
     # ------ Usuarios
     nuevoUsuario(input: UsuarioInput): Usuario
