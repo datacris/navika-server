@@ -2,6 +2,7 @@ const Producto = require("../models/legacy/Producto");
 const Usuario = require("../models/legacy/Usuario");
 const Cliente = require("../models/legacy/Cliente");
 const Pedido = require("../models/legacy/Pedido");
+const Quote = require("../models/Quote");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -237,6 +238,17 @@ const resolvers = {
       return {
         token: newToken(userExists, process.env.TOKEN_SECRET, "24h"),
       };
+    },
+
+    newQuote: async (_, { input }) => {
+      try {
+        const newQuote = new Quote(input);
+        const result = await newQuote.save();
+        return result;
+      } catch (error) {
+        console.log("Error en newQuote resolver ==> ", error);
+        throw error;
+      }
     },
     // ************* NAVIKA END MUTATION ************************************************************************************************
     nuevoUsuario: async (_, { input }) => {

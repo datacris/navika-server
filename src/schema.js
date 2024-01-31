@@ -23,6 +23,20 @@ input SignInInput {
 type Token {
   token: String
 }
+type Quote {
+  id: ID
+  quote: String
+  reference: String
+  author: String
+  book: String
+  created: String
+}
+input QuoteInput {
+  quote: String!
+  reference: String
+  author: String
+  book: String
+}
 
 # -------------------- NAVIKA END TYPE---------------------------------------------------------
 
@@ -161,6 +175,8 @@ type Token {
 
     createNewUser(input: UserInput): User
     userSignIn(input: SignInInput): Token
+
+    newQuote(input: QuoteInput): Quote
 
     # -------------------- NAVIKA INIT MUTATIONS---------------------------------------------------------
 
