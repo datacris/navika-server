@@ -26,6 +26,15 @@ const resolvers = {
     getUser: async (_, {}, ctx) => {
       return ctx.user;
     },
+    getQuotes: async () => {
+      try {
+        const quotes = await Quote.find({});
+        return quotes;
+      } catch (error) {
+        console.log("Error en getQuotes resolver ==> ", error);
+        throw error;
+      }
+    },
     // ************* NAVIKA END QUERY  ************************************************************************************************
 
     // returns an array of Tracks that will be used to populate the homepage grid of our web client

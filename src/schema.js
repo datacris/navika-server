@@ -131,6 +131,7 @@ input QuoteInput {
   type Query {
     # -------------------- NAVIKA INIT QUERY---------------------------------------------------------
     getUser: User
+    getQuotes: [Quote]
 
     # -------------------- NAVIKA END QUERY---------------------------------------------------------
 
