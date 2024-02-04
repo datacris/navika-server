@@ -259,6 +259,24 @@ const resolvers = {
         throw error;
       }
     },
+    deleteQuote: async (_, { id }) => {
+      const quote = await Quote.findById(id);
+      if (!quote) {
+        throw new Error("Quote no encontrado");
+      }
+      await Quote.findOneAndDelete({ _id: id });
+      return "Quote deleted";
+    },
+    updateQuote: async (_, { id, input }) => {
+      let quote = await Quote.findById(id);
+      if (!quote) {
+        throw new Error("Quote no encontrado");
+      }
+      quote = await Quote.findOneAndUpdate({ _id: id }, input, {
+        new: true,
+      });
+      return quote;
+    },
     // ************* NAVIKA END MUTATION ************************************************************************************************
     nuevoUsuario: async (_, { input }) => {
       const { email, password } = input;

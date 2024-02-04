@@ -178,6 +178,8 @@ input QuoteInput {
     userSignIn(input: SignInInput): Token
 
     newQuote(input: QuoteInput): Quote
+    deleteQuote(id: ID!): String
+    updateQuote(id: ID!, input: QuoteInput): Quote
 
     # -------------------- NAVIKA INIT MUTATIONS---------------------------------------------------------
 
