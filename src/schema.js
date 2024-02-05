@@ -133,6 +133,8 @@ input QuoteInput {
     getUser: User
     getQuotes: [Quote]
 
+    getQuote(id: ID!): Quote
+
     # -------------------- NAVIKA END QUERY---------------------------------------------------------
 
 

@@ -35,6 +35,13 @@ const resolvers = {
         throw error;
       }
     },
+    getQuote: async (_, { id }) => {
+      const quote = await Quote.findById(id);
+      if (!quote) {
+        throw new Error("quote no encontrado");
+      }
+      return quote;
+    },
     // ************* NAVIKA END QUERY  ************************************************************************************************
 
     // returns an array of Tracks that will be used to populate the homepage grid of our web client
